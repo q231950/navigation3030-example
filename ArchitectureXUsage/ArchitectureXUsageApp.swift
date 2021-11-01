@@ -11,7 +11,8 @@ import SwiftUI
 struct ArchitectureXUsageApp: App {
     var body: some Scene {
         WindowGroup {
-            AContentView()
+            ContentACoordinator()
+                .view
         }
     }
 }
