@@ -10,9 +10,13 @@ public enum PresentationStyle {
 }
 
 public class Router: ObservableObject {
+    public unowned var parent: Router?
+
     @Published public var showingSheet = false
     public var sheet: AnyView = AnyView(EmptyView())
-    public unowned var parent: Router?
+
+    @Published public var showingFullscreenModal = false
+    public var fullscreenModal: AnyView = AnyView(EmptyView())
 
     public init(parent: Router? = nil) {
         self.parent = parent
@@ -47,6 +51,9 @@ struct ViewCoordinator: ViewModifier {
 
     func body(content: Content) -> some View {
         content
+            .fullScreenCover(isPresented: $router.showingFullscreenModal) {
+                router.fullscreenModal
+            }
             .sheet(isPresented: $router.showingSheet) {
                 router.sheet
             }
@@ -66,6 +73,9 @@ extension Router {
             showingSheet = true
             break
         case .fullscreenModal:
+            let coordinator = to()
+            fullscreenModal = AnyView(coordinator.view)
+            showingFullscreenModal = true
             break
         case .replace:
             break
@@ -74,5 +84,6 @@ extension Router {
 
     public func dismiss() {
         showingSheet = false
+        showingFullscreenModal = false
     }
 }

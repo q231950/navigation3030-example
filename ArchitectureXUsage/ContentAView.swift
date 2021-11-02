@@ -21,6 +21,7 @@ struct ContentAInteractor: Interactor {
 
     func presentContentB() {
         router.transition(.present(modalInPresentation: true)) {
+            //        router.transition(.fullscreenModal) {
             ContentBCoordinator(router: Router(parent: router))
         }
     }
@@ -72,10 +73,16 @@ struct ContentBView: View {
 
     var body: some View {
         NavigationView {
-            Text(["A", "a", "B", "b"].randomElement()!)
-                .navigationBarItems(trailing: Button("Close") {
-                    interactor.dismiss()
-                })
+            ZStack {
+                Color.secondary
+
+                Text(["A", "a", "B", "b"].randomElement()!)
+                    .navigationBarItems(trailing: Button("Close") {
+                        interactor.dismiss()
+                    })
+            }
+            .ignoresSafeArea(.all, edges: .bottom)
+            .navigationTitle(Text("abc"))
         }
     }
 }
