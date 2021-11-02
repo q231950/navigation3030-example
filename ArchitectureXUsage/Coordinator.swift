@@ -18,6 +18,9 @@ public class Router: ObservableObject {
     @Published public var showingFullscreenModal = false
     public var fullscreenModal: AnyView = AnyView(EmptyView())
 
+    @Published public var isNavigationLinkActive = false
+    public var navigationLinkDestination: AnyView = AnyView(EmptyView())
+
     public init(parent: Router? = nil) {
         self.parent = parent
     }
@@ -49,14 +52,32 @@ extension View {
 struct ViewCoordinator: ViewModifier {
     @ObservedObject var router: Router
 
+    /// Hiding the navigation bar is possible with view modifiers:
+    /// ```swift
+    ///  Button("present") {
+    ///   interactor.presentContentB()
+    /// }
+    /// .navigationBarTitle("")
+    /// .navigationBarHidden(true)
+    /// ```
+    ///
     func body(content: Content) -> some View {
-        content
-            .fullScreenCover(isPresented: $router.showingFullscreenModal) {
-                router.fullscreenModal
+        NavigationView {
+            ZStack {
+                content
+                    .fullScreenCover(isPresented: $router.showingFullscreenModal) {
+                        router.fullscreenModal
+                    }
+                    .sheet(isPresented: $router.showingSheet) {
+                        router.sheet
+                    }
+                NavigationLink(isActive: $router.isNavigationLinkActive) {
+                    router.navigationLinkDestination
+                } label: {
+                    // nothing since this is provided by the initiator of the navigation link
+                }
             }
-            .sheet(isPresented: $router.showingSheet) {
-                router.sheet
-            }
+        }
     }
 }
 
@@ -66,7 +87,8 @@ extension Router {
     public func transition<C: Coordinator>(_ presentationStyle: PresentationStyle = .push, to: (/**/) -> C) {
         switch presentationStyle {
         case .push:
-            break
+            navigationLinkDestination = AnyView(to().contentView)
+            isNavigationLinkActive = true
         case .present(let isModalInPresentation):
             let coordinator = to()
             sheet = AnyView(coordinator.view)
@@ -85,5 +107,9 @@ extension Router {
     public func dismiss() {
         showingSheet = false
         showingFullscreenModal = false
+    }
+
+    public func pop() {
+        isNavigationLinkActive = false
     }
 }

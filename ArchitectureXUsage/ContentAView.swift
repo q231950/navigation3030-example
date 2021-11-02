@@ -5,8 +5,7 @@ class ContentACoordinator: Coordinator {
     var router: Router
     var interactor: ContentAInteractor
 
-    init() {
-        let router = Router()
+    init(router: Router) {
         interactor = ContentAInteractor(router: router)
         self.router = router
     }
@@ -21,7 +20,6 @@ struct ContentAInteractor: Interactor {
 
     func presentContentB() {
         router.transition(.present(modalInPresentation: true)) {
-            //        router.transition(.fullscreenModal) {
             ContentBCoordinator(router: Router(parent: router))
         }
     }
@@ -32,14 +30,19 @@ struct ContentAView: View {
     let interactor: ContentAInteractor
 
     var body: some View {
-        VStack {
-            Text("A")
-                .padding()
+        ZStack {
+            Color.init(white: 0.9)
+            VStack {
+                Text("A")
+                    .padding()
 
-            Button("toggle") {
-                interactor.presentContentB()
+                Button("present") {
+                    interactor.presentContentB()
+                }
             }
         }
+        .ignoresSafeArea(.all, edges: .bottom)
+        .navigationTitle(Text("A"))
     }
 }
 
@@ -65,6 +68,26 @@ struct ContentBInteractor: Interactor {
     func dismiss() {
         router.parent?.dismiss()
     }
+
+    func navigate() {
+        let x = [1,2,3].randomElement()!
+        switch x {
+        case 1:
+            router.transition(.push) {
+                ContentACoordinator(router: router)
+            }
+        case 2:
+            router.transition(.fullscreenModal) {
+                ContentBCoordinator(router: Router(parent: router))
+            }
+        case 3:
+            router.transition(.present(modalInPresentation: false)) {
+                ContentBCoordinator(router: Router(parent: router))
+            }
+        default: break
+        }
+
+    }
 }
 
 struct ContentBView: View {
@@ -72,17 +95,24 @@ struct ContentBView: View {
     let interactor: ContentBInteractor
 
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color.secondary
+        ZStack {
+            Color.init(white: 0.9)
 
-                Text(["A", "a", "B", "b"].randomElement()!)
-                    .navigationBarItems(trailing: Button("Close") {
-                        interactor.dismiss()
-                    })
+            VStack {
+                Text("B")
+                    .padding()
+
+                Button {
+                    interactor.navigate()
+                } label: {
+                    Text("Navigate")
+                }
             }
-            .ignoresSafeArea(.all, edges: .bottom)
-            .navigationTitle(Text("abc"))
         }
+        .navigationBarItems(trailing: Button("Close") {
+            interactor.dismiss()
+        })
+        .ignoresSafeArea(.all, edges: .bottom)
+        .navigationTitle(Text("B"))
     }
 }

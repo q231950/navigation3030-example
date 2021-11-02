@@ -11,7 +11,7 @@ import SwiftUI
 struct ArchitectureXUsageApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentACoordinator()
+            ContentACoordinator(router: Router())
                 .view
         }
     }
