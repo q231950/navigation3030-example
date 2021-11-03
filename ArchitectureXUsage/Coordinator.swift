@@ -19,7 +19,7 @@ public class Router: ObservableObject {
     public var fullscreenModal: AnyView = AnyView(EmptyView())
 
     @Published public var isNavigationLinkActive = false
-    public var navigationLinkDestination: AnyView = AnyView(EmptyView())
+    var navigationLinkDestination: AnyView?
 
     public init(parent: Router? = nil) {
         self.parent = parent
@@ -37,10 +37,20 @@ public protocol Coordinator {
 
 extension Coordinator {
 
-    public var view: some View {
-        contentView
-            .coordinated(router: router)
+    @ViewBuilder public func view(wrapInNavigation: Bool) -> some View {
+        if wrapInNavigation {
+            NavigationView {
+                contentView
+                    .coordinated(router: router)
+            }
+        } else {
+            contentView
+                .coordinated(router: router)
+        }
     }
+//    public var view: some View {
+//
+//    }
 }
 
 extension View {
@@ -62,7 +72,6 @@ struct ViewCoordinator: ViewModifier {
     /// ```
     ///
     func body(content: Content) -> some View {
-        NavigationView {
             ZStack {
                 content
                     .fullScreenCover(isPresented: $router.showingFullscreenModal) {
@@ -76,27 +85,29 @@ struct ViewCoordinator: ViewModifier {
                 } label: {
                     // nothing since this is provided by the initiator of the navigation link
                 }
-            }
+                .isDetailLink(false)
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
+public struct NavigationLinkDestination<ViewType: View> {
+    var view: ViewType
+}
 
 extension Router {
 
     public func transition<C: Coordinator>(_ presentationStyle: PresentationStyle = .push, to: (/**/) -> C) {
         switch presentationStyle {
         case .push:
-            navigationLinkDestination = AnyView(to().contentView)
+            navigationLinkDestination = AnyView(to().view(wrapInNavigation: false))
             isNavigationLinkActive = true
         case .present(let isModalInPresentation):
-            let coordinator = to()
-            sheet = AnyView(coordinator.view)
+            sheet = AnyView(to().view(wrapInNavigation: true))
             showingSheet = true
             break
         case .fullscreenModal:
-            let coordinator = to()
-            fullscreenModal = AnyView(coordinator.view)
+            fullscreenModal = AnyView(to().view(wrapInNavigation: true))
             showingFullscreenModal = true
             break
         case .replace:
@@ -108,7 +119,7 @@ extension Router {
         showingSheet = false
         showingFullscreenModal = false
     }
-
+    
     public func pop() {
         isNavigationLinkActive = false
     }

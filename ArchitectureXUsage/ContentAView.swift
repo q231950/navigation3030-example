@@ -18,8 +18,24 @@ class ContentACoordinator: Coordinator {
 struct ContentAInteractor: Interactor {
     let router: Router
 
-    func presentContentB() {
-        router.transition(.present(modalInPresentation: true)) {
+    func dismiss() {
+        router.parent?.dismiss()
+    }
+
+    func presentFullscreenB() {
+        router.transition(.fullscreenModal) {
+            ContentBCoordinator(router: Router(parent: router))
+        }
+    }
+
+    func pushB() {
+        router.transition(.push) {
+            ContentBCoordinator(router: Router(parent: router))
+        }
+    }
+
+    func presentB() {
+        router.transition(.present(modalInPresentation: false)) {
             ContentBCoordinator(router: Router(parent: router))
         }
     }
@@ -33,14 +49,22 @@ struct ContentAView: View {
         ZStack {
             Color.init(white: 0.9)
             VStack {
-                Text("A")
-                    .padding()
+                Button("Present B") {
+                    interactor.presentB()
+                }.padding()
 
-                Button("present") {
-                    interactor.presentContentB()
-                }
+                Button("Present Fullscreen B") {
+                    interactor.presentFullscreenB()
+                }.padding()
+
+                Button("Push B") {
+                    interactor.pushB()
+                }.padding()
             }
         }
+        .navigationBarItems(trailing: Button("Close") {
+            interactor.dismiss()
+        })
         .ignoresSafeArea(.all, edges: .bottom)
         .navigationTitle(Text("A"))
     }
@@ -56,7 +80,7 @@ final class ContentBCoordinator: Coordinator {
         self.router = router
     }
 
-    var contentView: some View {
+    var contentView: ContentBView {
         ContentBView(interactor: interactor)
     }
 }
@@ -69,24 +93,22 @@ struct ContentBInteractor: Interactor {
         router.parent?.dismiss()
     }
 
-    func navigate() {
-        let x = [1,2,3].randomElement()!
-        switch x {
-        case 1:
-            router.transition(.push) {
-                ContentACoordinator(router: router)
-            }
-        case 2:
-            router.transition(.fullscreenModal) {
-                ContentBCoordinator(router: Router(parent: router))
-            }
-        case 3:
-            router.transition(.present(modalInPresentation: false)) {
-                ContentBCoordinator(router: Router(parent: router))
-            }
-        default: break
+    func presentFullscreenA() {
+        router.transition(.fullscreenModal) {
+            ContentACoordinator(router: Router(parent: router))
         }
+    }
 
+    func pushA() {
+        router.transition(.push) {
+            ContentACoordinator(router: Router(parent: router))
+        }
+    }
+
+    func presentA() {
+        router.transition(.present(modalInPresentation: false)) {
+            ContentACoordinator(router: Router(parent: router))
+        }
     }
 }
 
@@ -99,13 +121,18 @@ struct ContentBView: View {
             Color.init(white: 0.9)
 
             VStack {
-                Text("B")
-                    .padding()
+                VStack {
+                    Button("Present A") {
+                        interactor.presentA()
+                    }.padding()
 
-                Button {
-                    interactor.navigate()
-                } label: {
-                    Text("Navigate")
+                    Button("Present Fullscreen A") {
+                        interactor.presentFullscreenA()
+                    }.padding()
+
+                    Button("Push A") {
+                        interactor.pushA()
+                    }.padding()
                 }
             }
         }

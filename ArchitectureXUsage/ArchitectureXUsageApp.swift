@@ -12,7 +12,7 @@ struct ArchitectureXUsageApp: App {
     var body: some Scene {
         WindowGroup {
             ContentACoordinator(router: Router())
-                .view
+                .view(wrapInNavigation: true)
         }
     }
 }
