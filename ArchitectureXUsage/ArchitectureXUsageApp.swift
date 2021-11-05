@@ -9,10 +9,16 @@ import SwiftUI
 
 @main
 struct ArchitectureXUsageApp: App {
+
+    let appCoordinator = AppCoordinator.shared
+
+    init() {
+        AppCoordinator.shared.configure(with: AnyCoordinator(ContentACoordinator(router: Router())))
+    }
+
     var body: some Scene {
         WindowGroup {
-            ContentACoordinator(router: Router())
-                .view(wrapInNavigation: true)
+            AppCoordinator.shared.view(wrapInNavigation: true)
         }
     }
 }

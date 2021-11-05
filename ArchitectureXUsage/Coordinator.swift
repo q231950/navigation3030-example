@@ -28,10 +28,8 @@ public class Router: ObservableObject {
 
 public protocol Coordinator {
     associatedtype ViewType: View
-    associatedtype InteractorType: Interactor
 
     var contentView: ViewType { get }
-    var interactor: InteractorType { get }
     var router: Router { get }
 }
 
@@ -52,6 +50,57 @@ extension Coordinator {
 //
 //    }
 }
+
+class AnyCoordinator: Coordinator {
+    var router: Router
+
+    let view: AnyView
+    let child: Any
+
+    init<C: Coordinator>(_ child: C) {
+        view = AnyView(child.contentView)
+        self.router = child.router
+        self.child = child
+    }
+
+    var contentView: AnyView {
+        view
+    }
+
+}
+
+class AppCoordinator: Coordinator {
+
+    static var shared = {
+        AppCoordinator(Router())
+    }()
+
+    var children = [AnyCoordinator]()
+
+    private init(_ router: Router) {
+        self.router = router
+    }
+
+    func add<C: Coordinator>(_ child: C) {
+        children.append(AnyCoordinator(child))
+    }
+
+    var router: Router
+
+    var root: AnyCoordinator?
+
+    func configure<C: Coordinator>(with root: C) {
+        let child = AnyCoordinator(root)
+        children.append(child)
+        self.root = child
+        router = child.router
+    }
+
+    var contentView: some View {
+        root?.contentView
+    }
+}
+
 
 extension View {
     func coordinated(router: Router) -> some View {
@@ -97,17 +146,21 @@ public struct NavigationLinkDestination<ViewType: View> {
 
 extension Router {
 
-    public func transition<C: Coordinator>(_ presentationStyle: PresentationStyle = .push, to: (/**/) -> C) {
+    public func transition<C: Coordinator>(_ presentationStyle: PresentationStyle, to: (/**/) -> C) {
+
+        let child = to()
+        AppCoordinator.shared.add(AnyCoordinator(child))
+
         switch presentationStyle {
         case .push:
-            navigationLinkDestination = AnyView(to().view(wrapInNavigation: false))
+            navigationLinkDestination = AnyView(child.view(wrapInNavigation: false))
             isNavigationLinkActive = true
         case .present(let isModalInPresentation):
-            sheet = AnyView(to().view(wrapInNavigation: true))
+            sheet = AnyView(child.view(wrapInNavigation: true))
             showingSheet = true
             break
         case .fullscreenModal:
-            fullscreenModal = AnyView(to().view(wrapInNavigation: true))
+            fullscreenModal = AnyView(child.view(wrapInNavigation: true))
             showingFullscreenModal = true
             break
         case .replace:
