@@ -34,21 +34,10 @@ public protocol Coordinator {
 }
 
 extension Coordinator {
-
-    @ViewBuilder public func view(wrapInNavigation: Bool) -> some View {
-        if wrapInNavigation {
-            NavigationView {
-                contentView
-                    .coordinated(router: router)
-            }
-        } else {
-            contentView
-                .coordinated(router: router)
-        }
+    public var view: some View {
+        contentView
+            .coordinated(router: router)
     }
-//    public var view: some View {
-//
-//    }
 }
 
 class AnyCoordinator: Coordinator {
@@ -106,6 +95,19 @@ extension View {
     func coordinated(router: Router) -> some View {
         modifier(ViewCoordinator(router: router))
     }
+
+    var containInNavigation: some View {
+        modifier(ViewNavigationContainer())
+    }
+}
+
+struct ViewNavigationContainer: ViewModifier {
+
+    func body(content: Content) -> some View {
+        NavigationView {
+            content
+        }
+    }
 }
 
 struct ViewCoordinator: ViewModifier {
@@ -134,9 +136,7 @@ struct ViewCoordinator: ViewModifier {
                 } label: {
                     // nothing since this is provided by the initiator of the navigation link
                 }
-                .isDetailLink(false)
         }
-        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
@@ -153,14 +153,14 @@ extension Router {
 
         switch presentationStyle {
         case .push:
-            navigationLinkDestination = AnyView(child.view(wrapInNavigation: false))
+            navigationLinkDestination = AnyView(child.view)
             isNavigationLinkActive = true
         case .present(let isModalInPresentation):
-            sheet = AnyView(child.view(wrapInNavigation: true))
+            sheet = AnyView(child.view.containInNavigation)
             showingSheet = true
             break
         case .fullscreenModal:
-            fullscreenModal = AnyView(child.view(wrapInNavigation: true))
+            fullscreenModal = AnyView(child.view.containInNavigation)
             showingFullscreenModal = true
             break
         case .replace:

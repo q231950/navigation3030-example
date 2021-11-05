@@ -12,7 +12,7 @@ class ViewModelA: ObservableObject {
 class ContentACoordinator: Coordinator {
 
     var router: Router
-    let viewModel: ViewModelA
+    let viewModel = ViewModelA()
     var disposeBag = Set<AnyCancellable>()
 
     var contentView: some View {
@@ -21,7 +21,6 @@ class ContentACoordinator: Coordinator {
 
     init(router: Router) {
         self.router = router
-        self.viewModel = ViewModelA()
 
         self.viewModel.navigation.sink { event in
             switch event {

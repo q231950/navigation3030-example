@@ -18,7 +18,7 @@ struct ArchitectureXUsageApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AppCoordinator.shared.view(wrapInNavigation: true)
+            AppCoordinator.shared.view.containInNavigation
         }
     }
 }
