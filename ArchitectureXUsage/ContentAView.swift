@@ -7,45 +7,50 @@ class ViewModelA: ObservableObject {
     }
 
     var navigation = PassthroughSubject<Navigation, Never>()
+    private var coordinator: ContentACoordinator
+
+    @Published var title: String = "A"
+
+    init(coordinator: ContentACoordinator) {
+        self.coordinator = coordinator
+
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            self?.title = self?.title == "A" ? "a" : "A"
+        }
+    }
 }
 
 class ContentACoordinator: Coordinator {
 
-    var router: Router
-    let viewModel = ViewModelA()
+    var router: Router? = Router()
     var disposeBag = Set<AnyCancellable>()
 
     var contentView: some View {
-        ContentAView(viewModel: viewModel)
-    }
-
-    init(router: Router) {
-        self.router = router
-
-        self.viewModel.navigation.sink { event in
+        let viewModel = ViewModelA(coordinator: self)
+        viewModel.navigation.sink { [weak self] event in
             switch event {
             case .dismiss:
-                router.parent?.dismiss()
+                self?.dismiss()
             case .presentFullscreenB:
-                router.transition(.fullscreenModal) {
-                    ContentBCoordinator(router: Router(parent: router))
-                }
+                self?.transition(.fullscreenModal, to: ContentBCoordinator())
             case .pushB:
-                router.transition(.push) {
-                    ContentBCoordinator(router: Router(parent: router))
-                }
+                self?.transition(.push, to: ContentBCoordinator())
             case .presentB:
-                router.transition(.present(modalInPresentation: false)) {
-                    ContentBCoordinator(router: Router(parent: router))
-                }
+                self?.transition(.present(modalInPresentation: false), to: ContentBCoordinator())
             }
         }.store(in: &disposeBag)
+        return ContentAView(viewModel: viewModel)
     }
+
 }
 
 struct ContentAView: View {
 
-    unowned var viewModel: ViewModelA
+    @ObservedObject var viewModel: ViewModelA
+
+    init(viewModel: ViewModelA) {
+        self.viewModel = viewModel
+    }
 
     var body: some View {
         ZStack {
@@ -68,55 +73,34 @@ struct ContentAView: View {
             viewModel.navigation.send(.dismiss)
         })
         .ignoresSafeArea(.all, edges: .bottom)
-        .navigationTitle(Text("A"))
+        .navigationTitle(Text(viewModel.title))
     }
 }
 
 final class ContentBCoordinator: Coordinator {
 
-    var router: Router
-    var navigator: ContentBNavigator
-
-    init(router: Router) {
-        navigator = ContentBNavigator(router: router)
-        self.router = router
-    }
+    var router: Router?
 
     var contentView: ContentBView {
-        ContentBView(navigator: navigator)
-    }
-}
-
-struct ContentBNavigator {
-
-    let router: Router
-
-    func dismiss() {
-        router.parent?.dismiss()
+        ContentBView(coordinator: self)
     }
 
     func presentFullscreenA() {
-        router.transition(.fullscreenModal) {
-            ContentACoordinator(router: Router(parent: router))
-        }
+        transition(.fullscreenModal, to: ContentACoordinator())
     }
 
     func pushA() {
-        router.transition(.push) {
-            ContentACoordinator(router: Router(parent: router))
-        }
+        transition(.push, to: ContentACoordinator())
     }
 
     func presentA() {
-        router.transition(.present(modalInPresentation: false)) {
-            ContentACoordinator(router: Router(parent: router))
-        }
+        transition(.present(modalInPresentation: false), to: ContentACoordinator())
     }
 }
 
 struct ContentBView: View {
 
-    let navigator: ContentBNavigator
+    let coordinator: ContentBCoordinator
 
     var body: some View {
         ZStack {
@@ -125,21 +109,21 @@ struct ContentBView: View {
             VStack {
                 VStack {
                     Button("Present A") {
-                        navigator.presentA()
+                        coordinator.presentA()
                     }.padding()
 
                     Button("Present Fullscreen A") {
-                        navigator.presentFullscreenA()
+                        coordinator.presentFullscreenA()
                     }.padding()
 
                     Button("Push A") {
-                        navigator.pushA()
+                        coordinator.pushA()
                     }.padding()
                 }
             }
         }
         .navigationBarItems(trailing: Button("Close") {
-            navigator.dismiss()
+            coordinator.dismiss()
         })
         .ignoresSafeArea(.all, edges: .bottom)
         .navigationTitle(Text("B"))

@@ -19,81 +19,30 @@ public class Router: ObservableObject {
     public var fullscreenModal: AnyView = AnyView(EmptyView())
 
     @Published public var isNavigationLinkActive = false
-    var navigationLinkDestination: AnyView?
+    var navigationLinkDestination: AnyView = AnyView(EmptyView())
 
     public init(parent: Router? = nil) {
         self.parent = parent
     }
 }
 
-public protocol Coordinator {
+public protocol Coordinator: AnyObject {
     associatedtype ViewType: View
 
     var contentView: ViewType { get }
-    var router: Router { get }
+    var router: Router? { get set }
 }
 
 extension Coordinator {
     public var view: some View {
         contentView
-            .coordinated(router: router)
+            .coordinated(coordinator: self)
     }
 }
-
-class AnyCoordinator: Coordinator {
-    var router: Router
-
-    let view: AnyView
-    let child: Any
-
-    init<C: Coordinator>(_ child: C) {
-        view = AnyView(child.contentView)
-        self.router = child.router
-        self.child = child
-    }
-
-    var contentView: AnyView {
-        view
-    }
-
-}
-
-class AppCoordinator: Coordinator {
-
-    static var shared = {
-        AppCoordinator(Router())
-    }()
-
-    var children = [AnyCoordinator]()
-
-    private init(_ router: Router) {
-        self.router = router
-    }
-
-    func add<C: Coordinator>(_ child: C) {
-        children.append(AnyCoordinator(child))
-    }
-
-    var router: Router
-
-    var root: AnyCoordinator?
-
-    func configure<C: Coordinator>(with root: C) {
-        let child = AnyCoordinator(root)
-        children.append(child)
-        self.root = child
-        router = child.router
-    }
-
-    var contentView: some View {
-        root?.contentView
-    }
-}
-
 
 extension View {
-    func coordinated(router: Router) -> some View {
-        modifier(ViewCoordinator(router: router))
+    func coordinated<C: Coordinator>(coordinator: C) -> some View {
+        modifier(ViewCoordinator(router: coordinator.router ?? Router()))
     }
 
     var containInNavigation: some View {
@@ -107,6 +56,7 @@ struct ViewNavigationContainer: ViewModifier {
         NavigationView {
             content
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
@@ -123,19 +73,17 @@ struct ViewCoordinator: ViewModifier {
     /// ```
     ///
     func body(content: Content) -> some View {
-            ZStack {
-                content
-                    .fullScreenCover(isPresented: $router.showingFullscreenModal) {
-                        router.fullscreenModal
-                    }
-                    .sheet(isPresented: $router.showingSheet) {
-                        router.sheet
-                    }
-                NavigationLink(isActive: $router.isNavigationLinkActive) {
-                    router.navigationLinkDestination
-                } label: {
-                    // nothing since this is provided by the initiator of the navigation link
-                }
+        content
+            .fullScreenCover(isPresented: $router.showingFullscreenModal) {
+                router.fullscreenModal
+            }
+            .sheet(isPresented: $router.showingSheet) {
+                router.sheet
+            }
+        NavigationLink(isActive: $router.isNavigationLinkActive) {
+            router.navigationLinkDestination
+        } label: {
+            // nothing since this is provided by the initiator of the navigation link
         }
     }
 }
@@ -144,24 +92,23 @@ public struct NavigationLinkDestination<ViewType: View> {
     var view: ViewType
 }
 
-extension Router {
+extension Coordinator {
 
-    public func transition<C: Coordinator>(_ presentationStyle: PresentationStyle, to: (/**/) -> C) {
+    public func transition<C: Coordinator>(_ presentationStyle: PresentationStyle, to child: C) {
 
-        let child = to()
-        AppCoordinator.shared.add(AnyCoordinator(child))
+        child.router = Router(parent: router)
 
         switch presentationStyle {
         case .push:
-            navigationLinkDestination = AnyView(child.view)
-            isNavigationLinkActive = true
+            router?.navigationLinkDestination = AnyView(child.view)
+            router?.isNavigationLinkActive = true
         case .present(let isModalInPresentation):
-            sheet = AnyView(child.view.containInNavigation)
-            showingSheet = true
+            router?.sheet = AnyView(child.view.containInNavigation)
+            router?.showingSheet = true
             break
         case .fullscreenModal:
-            fullscreenModal = AnyView(child.view.containInNavigation)
-            showingFullscreenModal = true
+            router?.fullscreenModal = AnyView(child.view.containInNavigation)
+            router?.showingFullscreenModal = true
             break
         case .replace:
             break
@@ -169,11 +116,15 @@ extension Router {
     }
 
     public func dismiss() {
-        showingSheet = false
-        showingFullscreenModal = false
+        var parent: Router? = router?.parent
+        //        while parent?.parent != nil {
+        //            parent = parent?.parent
+        //        }
+        parent?.showingSheet = false
+        parent?.showingFullscreenModal = false
     }
     
     public func pop() {
-        isNavigationLinkActive = false
+        router?.isNavigationLinkActive = false
     }
 }
