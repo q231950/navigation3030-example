@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ArchitectureX
 
 @main
 struct ArchitectureXUsageApp: App {

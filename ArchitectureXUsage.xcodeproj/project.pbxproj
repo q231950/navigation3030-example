@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,9 +11,7 @@
 		3B0FE96326B85F6C00BC0F60 /* ContentAView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B0FE96226B85F6C00BC0F60 /* ContentAView.swift */; };
 		3B0FE96526B85F7000BC0F60 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B0FE96426B85F7000BC0F60 /* Assets.xcassets */; };
 		3B0FE96826B85F7000BC0F60 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B0FE96726B85F7000BC0F60 /* Preview Assets.xcassets */; };
-		3BAC361127307F84000C7E59 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAC360E27307F84000C7E59 /* Coordinator.swift */; };
-		3BAC361227307F84000C7E59 /* Navigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAC360F27307F84000C7E59 /* Navigator.swift */; };
-		3BAC361327307F84000C7E59 /* Interactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAC361027307F84000C7E59 /* Interactor.swift */; };
+		3B35F0612763DCBF00981E20 /* ArchitectureX in Frameworks */ = {isa = PBXBuildFile; productRef = 3B35F0602763DCBF00981E20 /* ArchitectureX */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,9 +21,18 @@
 		3B0FE96426B85F7000BC0F60 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3B0FE96726B85F7000BC0F60 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		3B0FE96926B85F7000BC0F60 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3BAC360E27307F84000C7E59 /* Coordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
-		3BAC360F27307F84000C7E59 /* Navigator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Navigator.swift; sourceTree = "<group>"; };
-		3BAC361027307F84000C7E59 /* Interactor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Interactor.swift; sourceTree = "<group>"; };
+		3B35F0362763DB4700981E20 /* ArchitectureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchitectureTests.swift; sourceTree = "<group>"; };
+		3B35F0372763DB4700981E20 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		3B35F0382763DB4700981E20 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		3B35F0392763DB4700981E20 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		3B35F03C2763DB4700981E20 /* ViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
+		3B35F03D2763DB4700981E20 /* PresentationStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationStyle.swift; sourceTree = "<group>"; };
+		3B35F03E2763DB4700981E20 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		3B35F03F2763DB4700981E20 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		3B35F0422763DB4700981E20 /* package.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; path = package.xcworkspace; sourceTree = "<group>"; };
+		3B35F0462763DB4700981E20 /* xcschememanagement.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = xcschememanagement.plist; sourceTree = "<group>"; };
+		3B35F05B2763DC0C00981E20 /* ArchitectureX */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ArchitectureX; path = ../ArchitectureX; sourceTree = "<group>"; };
+		3B35F05F2763DCAD00981E20 /* ArchitectureX */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ArchitectureX; path = ../ArchitectureX; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B35F0612763DCBF00981E20 /* ArchitectureX in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,7 +50,7 @@
 		3B0FE95426B85F6C00BC0F60 = {
 			isa = PBXGroup;
 			children = (
-				3B7238C926B8602200BD5810 /* Packages */,
+				3B35F05F2763DCAD00981E20 /* ArchitectureX */,
 				3B0FE95F26B85F6C00BC0F60 /* ArchitectureXUsage */,
 				3B0FE95E26B85F6C00BC0F60 /* Products */,
 				3B7238CB26B8672500BD5810 /* Frameworks */,
@@ -60,9 +68,6 @@
 		3B0FE95F26B85F6C00BC0F60 /* ArchitectureXUsage */ = {
 			isa = PBXGroup;
 			children = (
-				3BAC360E27307F84000C7E59 /* Coordinator.swift */,
-				3BAC361027307F84000C7E59 /* Interactor.swift */,
-				3BAC360F27307F84000C7E59 /* Navigator.swift */,
 				3B0FE96026B85F6C00BC0F60 /* ArchitectureXUsageApp.swift */,
 				3B0FE96226B85F6C00BC0F60 /* ContentAView.swift */,
 				3B0FE96426B85F7000BC0F60 /* Assets.xcassets */,
@@ -80,16 +85,100 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		3B7238C926B8602200BD5810 /* Packages */ = {
+		3B35F0332763DB4700981E20 /* ArchitectureX */ = {
 			isa = PBXGroup;
 			children = (
+				3B35F0342763DB4700981E20 /* Tests */,
+				3B35F0372763DB4700981E20 /* README.md */,
+				3B35F0382763DB4700981E20 /* .gitignore */,
+				3B35F0392763DB4700981E20 /* Package.swift */,
+				3B35F03A2763DB4700981E20 /* Sources */,
+				3B35F0402763DB4700981E20 /* .swiftpm */,
 			);
-			name = Packages;
+			path = ArchitectureX;
+			sourceTree = "<group>";
+		};
+		3B35F0342763DB4700981E20 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				3B35F0352763DB4700981E20 /* ArchitectureTests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		3B35F0352763DB4700981E20 /* ArchitectureTests */ = {
+			isa = PBXGroup;
+			children = (
+				3B35F0362763DB4700981E20 /* ArchitectureTests.swift */,
+			);
+			path = ArchitectureTests;
+			sourceTree = "<group>";
+		};
+		3B35F03A2763DB4700981E20 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				3B35F03B2763DB4700981E20 /* Architecture */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		3B35F03B2763DB4700981E20 /* Architecture */ = {
+			isa = PBXGroup;
+			children = (
+				3B35F03C2763DB4700981E20 /* ViewModifiers.swift */,
+				3B35F03D2763DB4700981E20 /* PresentationStyle.swift */,
+				3B35F03E2763DB4700981E20 /* Router.swift */,
+				3B35F03F2763DB4700981E20 /* Coordinator.swift */,
+			);
+			path = Architecture;
+			sourceTree = "<group>";
+		};
+		3B35F0402763DB4700981E20 /* .swiftpm */ = {
+			isa = PBXGroup;
+			children = (
+				3B35F0412763DB4700981E20 /* xcode */,
+			);
+			path = .swiftpm;
+			sourceTree = "<group>";
+		};
+		3B35F0412763DB4700981E20 /* xcode */ = {
+			isa = PBXGroup;
+			children = (
+				3B35F0422763DB4700981E20 /* package.xcworkspace */,
+				3B35F0432763DB4700981E20 /* xcuserdata */,
+			);
+			path = xcode;
+			sourceTree = "<group>";
+		};
+		3B35F0432763DB4700981E20 /* xcuserdata */ = {
+			isa = PBXGroup;
+			children = (
+				3B35F0442763DB4700981E20 /* kim.xcuserdatad */,
+			);
+			path = xcuserdata;
+			sourceTree = "<group>";
+		};
+		3B35F0442763DB4700981E20 /* kim.xcuserdatad */ = {
+			isa = PBXGroup;
+			children = (
+				3B35F0452763DB4700981E20 /* xcschemes */,
+			);
+			path = kim.xcuserdatad;
+			sourceTree = "<group>";
+		};
+		3B35F0452763DB4700981E20 /* xcschemes */ = {
+			isa = PBXGroup;
+			children = (
+				3B35F0462763DB4700981E20 /* xcschememanagement.plist */,
+			);
+			path = xcschemes;
 			sourceTree = "<group>";
 		};
 		3B7238CB26B8672500BD5810 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3B35F05B2763DC0C00981E20 /* ArchitectureX */,
+				3B35F0332763DB4700981E20 /* ArchitectureX */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -111,6 +200,7 @@
 			);
 			name = ArchitectureXUsage;
 			packageProductDependencies = (
+				3B35F0602763DCBF00981E20 /* ArchitectureX */,
 			);
 			productName = ArchitectureXUsage;
 			productReference = 3B0FE95D26B85F6C00BC0F60 /* ArchitectureXUsage.app */;
@@ -166,10 +256,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B0FE96326B85F6C00BC0F60 /* ContentAView.swift in Sources */,
-				3BAC361227307F84000C7E59 /* Navigator.swift in Sources */,
-				3BAC361327307F84000C7E59 /* Interactor.swift in Sources */,
 				3B0FE96126B85F6C00BC0F60 /* ArchitectureXUsageApp.swift in Sources */,
-				3BAC361127307F84000C7E59 /* Coordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,6 +445,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3B35F0602763DCBF00981E20 /* ArchitectureX */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ArchitectureX;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3B0FE95526B85F6C00BC0F60 /* Project object */;
 }

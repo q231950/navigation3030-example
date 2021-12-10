@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import ArchitectureX
 
 class ViewModelA: ObservableObject {
     enum Navigation {
@@ -32,13 +33,14 @@ class ContentACoordinator: Coordinator {
             case .dismiss:
                 self?.dismiss()
             case .presentFullscreenB:
-                self?.transition(.fullscreenModal, to: ContentBCoordinator())
+                self?.transition(to: ContentBCoordinator(), style: .fullscreenModal)
             case .pushB:
-                self?.transition(.push, to: ContentBCoordinator())
+                self?.transition(to: ContentBCoordinator(), style: .push)
             case .presentB:
-                self?.transition(.present(modalInPresentation: false), to: ContentBCoordinator())
+                self?.transition(to: ContentBCoordinator(), style: .present(modalInPresentation: false))
             }
         }.store(in: &disposeBag)
+
         return ContentAView(viewModel: viewModel)
     }
 
@@ -86,15 +88,15 @@ final class ContentBCoordinator: Coordinator {
     }
 
     func presentFullscreenA() {
-        transition(.fullscreenModal, to: ContentACoordinator())
+        transition(to: ContentACoordinator(), style: .fullscreenModal)
     }
 
     func pushA() {
-        transition(.push, to: ContentACoordinator())
+        transition(to: ContentACoordinator(), style: .push)
     }
 
     func presentA() {
-        transition(.present(modalInPresentation: false), to: ContentACoordinator())
+        transition(to: ContentACoordinator(), style: .present(modalInPresentation: false))
     }
 }
 
